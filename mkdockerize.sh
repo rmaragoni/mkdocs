@@ -13,7 +13,7 @@ else
     echo "Please Install docker and try again"
 fi
 
-echo "INFO: Bulding the dokcer image..."
+echo "INFO: Bulding the docker image..."
 
 sudo docker build -t mkdocs:v1.0.0 .
 
