@@ -7,11 +7,13 @@ LABEL maintainer=raghu
 # Any Environment variables
 ENV environment=development
 
-# install mkdocs utility as suggested in documentation
-RUN pip install mkdocs
+# Copy the wrapper script
+COPY mkdocswrapper.sh /opt/
 
-# Generating skeleton project 
-RUN mkdocs new docs
+# install mkdocs utility as suggested in documentation
+RUN pip install mkdocs && \ 
+    mkdir /docs && \
+    chmod +x /opt/mkdocswrapper.sh
 
 # Set working directory
 WORKDIR /docs
@@ -20,6 +22,6 @@ WORKDIR /docs
 EXPOSE 8000
 
 # Start development server by default
-ENTRYPOINT ["mkdocs"]
+ENTRYPOINT ["/opt/mkdocswrapper.sh"]
 # Default arguments to the above mkdocs command 
-CMD ["serve", "--dev-addr=0.0.0.0:8000"]
+CMD ["help"]
