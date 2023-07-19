@@ -2,6 +2,17 @@
 
 echo "Welcome to dockerized solution for building mkdocs"
 
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
+if [ -x "$(command -v docker)" ]; then
+    echo "INFO: Found Docker installation, proceeding.."
+else
+    echo "Please Install docker and try again"
+fi
+
 echo "INFO: Bulding the dokcer image..."
 
 sudo docker build -t mkdocs:v1.0.0 .
