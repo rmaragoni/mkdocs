@@ -27,7 +27,7 @@ Inorder to use this project for producing and serving the project, follow the be
    sh mkdockerize.sh
 
 3. This script first build the dokcer image with the help of Dockerfile and tag the image with name of mkdocs:v1.0.04
-4. Once the image is build, it propmts for y/n for producing the sample static content.
+4. Once the image is build, it prompts for y/n for producing the sample static content.
 5. A docker run command will be executed by passing volume as current directlory, ports for serving the traffic, permissions for creating the produced content and **produce** as a argument to the entrypoint which triggers another script to perform creating a sample project and build it then create a tar file(generated site folder will be zipped) and copy into main folder
 6. Once the produce step is completed, it propmts for y/n for serving the sample static content.
 7. A docker run command will be executed by passing volume as current directlory, ports for serving the traffic, permissions for creating the produced content and **serve** as a argument to the entrypoint which serve the traffic in the format of mkdocs
