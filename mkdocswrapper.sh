@@ -23,21 +23,23 @@ case "$input" in
     
     #case 2 - producing the sample project
     "produce")
-	echo "producing the documents"
-      	mkdocs new .
-      	mkdocs build
-      	tar -cvzf mkdocsdeploy.tar.gz docs/ mkdocs.yml
-	cd /docs/site 
-      	tar -czf site.tar.gz * 
-      	mv site.tar.gz /docs
-       
-	rm -rf /docs/site /docs/docs /docs/mkdocs.yml
+        echo "checking if mkdocs.yml file precent.."
+	if [ -f "mkdocs.yml" ]; then
+          echo "INFO: File exists..."
+        else
+	  echo "INFO: No sample project found, hence creating a sample project"
+	  mkdocs new .
+        fi
+      	
+	mkdocs build
+      	tar -czf mkdocsdeploy.tar.gz docs/ mkdocs.yml
+      	tar -czf site.tar.gz site/*
+        rm -rf docs/ mkdocs.yml site/	
     ;;
 
     #case 3 - serving mkdocs static site
     "serve")
         echo "Serving mkdocs site"
-      	cd /docs
 	tar -xzf mkdocsdeploy.tar.gz
       	mkdocs serve --dev-addr=0.0.0.0:8000
 esac
