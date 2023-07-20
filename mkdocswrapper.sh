@@ -22,18 +22,22 @@ case "$input" in
     ;;
     
     #case 2 - producing the sample project
-    "produce") 
-      	echo "producing the documents"
+    "produce")
+	echo "producing the documents"
       	mkdocs new .
       	mkdocs build
-      	cd /docs/site 
-      	tar -czf site.tar.gz *
-      	mv site.tar.gz /docs && rm -rf /docs/site
+      	tar -cvzf mkdocsdeploy.tar.gz docs/ mkdocs.yml
+	cd /docs/site 
+      	tar -czf site.tar.gz * 
+      	mv site.tar.gz /docs
+       
+	rm -rf /docs/site /docs/docs /docs/mkdocs.yml
     ;;
 
     #case 3 - serving mkdocs static site
     "serve")
-      	echo "Serving mkdocs site"
+        echo "Serving mkdocs site"
       	cd /docs
+	tar -xzf mkdocsdeploy.tar.gz
       	mkdocs serve --dev-addr=0.0.0.0:8000
 esac
