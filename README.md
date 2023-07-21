@@ -16,18 +16,21 @@ Below are the listed files are used for finishing the sample project
      Dockerfile         - A Dockerfile for building the mkdocs docker image
      mkdocswrapper.sh   - A wrapper script used for producing and serving the website with sample doc
      mkdockerize.sh     - A script to automate build, generating the site folder tar ball, and serving the static website in the mkdocs format
+     Jenkinsfile        - Jenkinsfile which automates the build and testing the mkdocs site
 
 ### How to Use?
 
 Inorder to use this project for producing and serving the project, follow the below steps 
 
 1. first clone this repo into your local workspace
-2. Run script called **mkdockerize.sh** using
+2. Run script called **mkdockerize.sh** with **help** argument to get inputs on how to run this
+
+   sh mkdockerize.sh help
+
+3. if you pass **produce** argument to generate  sample project and build it, which also generates site folder suitable for nginx/apache webservers hostable files
+4. if you pass **serve** argument it takes the tar file generated from the above produce and extract it in container in some location and start serving it 8000 port
+5. if you would like to run all (build, produce, serve) in one go, dont pass any args. By default it performs the all actions
 
    sh mkdockerize.sh
 
-3. This script first build the dokcer image with the help of Dockerfile and tag the image with name of mkdocs:v1.0.04
-4. Once the image is build, it propmts for y/n for producing the sample static content.
-5. A docker run command will be executed by passing volume as current directlory, ports for serving the traffic, permissions for creating the produced content and **produce** as a argument to the entrypoint which triggers another script to perform creating a sample project and build it then create a tar file(generated site folder will be zipped) and copy into main folder
-6. Once the produce step is completed, it propmts for y/n for serving the sample static content.
-7. A docker run command will be executed by passing volume as current directlory, ports for serving the traffic, permissions for creating the produced content and **serve** as a argument to the entrypoint which serve the traffic in the format of mkdocs
+6. Once the site is running, use _curl http://127.0.0.1:8000_ to access document site
