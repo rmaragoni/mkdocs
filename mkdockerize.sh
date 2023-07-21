@@ -1,32 +1,78 @@
 #!/bin/sh
 
-echo "Welcome to dockerized solution for building mkdocs"
+input=$1
 
-if [ -d "mkdocs_project" ]; then
-   echo "Required directory exists..."
-else
-   echo "INFO: Creating directory"	 
-   mkdir mkdocs_project	
-fi
+prechecks() {
+	echo "Welcome to dockerized solution for building mkdocs"
 
-if [ -x "$(command -v docker)" ]; then
-    echo "INFO: Found Docker installation, proceeding.."
-else
-    echo "Please Install docker and try again"
-fi
+	if [ `whoami` != 'root' ];then
+	    echo "Please run this script as root user"
+	    exit 1
+	fi
 
-echo "INFO: Bulding the dokcer image..."
+	if [ -d "mkdocs_project" ]; then
+	   echo "Required directory exists..."
+	else
+	   echo "INFO: Creating directory"	 
+	   mkdir mkdocs_project	
+	fi
 
-sudo docker build -t mkdocs:v1.0.0 .
+	if [ -x "$(command -v docker)" ]; then
+	    echo "INFO: Found Docker installation, proceeding.."
+	else
+	    echo "Please Install docker and try again"
+	fi
+}
 
-echo "Do you want to produce the sample project and generate site folder?"
-read -p "Continue? (y/n): " confirm
+build() {
+	echo "INFO: Bulding the dokcer image..."
 
-sudo docker run -it --rm -v $PWD:/docs -w /docs/mkdocs_project -u $(id -u ${USER}):$(id -g ${USER}) mkdocs:v1.0.0 produce
+	sudo docker build -t mkdocs:v1.0.0 .
+}
 
-echo "INFO: Site produced successfully, generated tar file can also be hosted in any webserver"
+produce() {
+	docker run -it --rm -v $PWD:/docs -w /docs/mkdocs_project -u $(id -u ${USER}):$(id -g ${USER}) mkdocs:v1.0.0 produce
+	echo "INFO: Site produced successfully, generated site tar file can also be hosted in any webserver"
+}
 
-echo "Do you want to serve the webiste with mkdocs generated format?"
-read -p "Continue? (y/n): " confirm
 
-sudo docker run -it --rm -v $PWD:/docs -w /docs/mkdocs_project -p 8000:8000 -u $(id -u ${USER}):$(id -g ${USER}) mkdocs:v1.0.0 serve
+serve() {
+	echo "INFO: Starting mkdocs server on 8000 port.."
+  	docker run -it --rm -v $PWD:/docs -w /docs/mkdocs_project -p 8000:8000 -u $(id -u ${USER}):$(id -g ${USER}) mkdocs:v1.0.0 serve
+}
+
+
+case "$input" in
+    #case 1 - printing the required info, which is default option
+    "help")
+    	echo """
+   	This automated script is used to build and host mkdocs site
+   	Use this script as below..
+   
+   	To produce and serve (without passing any argument, this method automate build and serve)
+   	sudo sh ./mkdockerize.sh
+   
+   	produce only
+   	sudo sh ./mkdockerize.sh produce
+   
+   	serve only 
+   	sudo sh ./mkdockerize.sh serve
+	   """
+	   ;;
+
+   "produce")
+   	prechecks
+   	produce
+   	;;
+   
+   "serve")
+   	prechecks
+   	serve
+   	;;
+   *)
+   	prechecks
+   	build
+   	produce
+   	serve
+      ;;	
+esac
